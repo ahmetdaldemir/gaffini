@@ -1,0 +1,32 @@
+# Environment files
+.env
+.env.local
+.env.production
+
+# Docker
+docker-compose.override.yml
+docker-compose.override.yaml
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.temp
+
+# Laravel specific (already handled in laravel-app/.gitignore)
+# But keeping some important ones here for clarity
+laravel-app/.env
+laravel-app/vendor/
+laravel-app/node_modules/
+laravel-app/storage/*.key

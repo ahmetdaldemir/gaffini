@@ -1,0 +1,47 @@
+# Laravel specific
+laravel-app/node_modules
+laravel-app/public/hot
+laravel-app/public/storage
+laravel-app/storage/*.key
+laravel-app/vendor
+laravel-app/.env
+laravel-app/.env.backup
+laravel-app/.phpunit.result.cache
+laravel-app/homestead.json
+laravel-app/homestead.yaml
+laravel-app/npm-debug.log
+laravel-app/yarn-error.log
+laravel-app/.idea
+laravel-app/.vscode
+
+# Docker specific
+docker-compose.override.yml
+docker-compose.override.yaml
+.dockerignore
+Dockerfile*
+
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Documentation
+README.md
+*.md
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.temp
