@@ -2,9 +2,6 @@
 
 @section('content')
 
-
-
-    <!-- Hero Area -->
     <div id="home-1" class="homepage-slides owl-carousel">
         @php
             $sliders = \App\Models\Slider::active()->ordered()->get();
@@ -40,40 +37,6 @@
             </div>
         @endforeach
     </div>
-
-    <!-- Off-canvas Area-->
-    <div class="extra-info">
-        <div class="close-icon menu-close">
-            <button>
-                <i class="las la-times"></i>
-            </button>
-        </div>
-        <div class="logo-side">
-            <div class="logo">
-                <a href="index.html"><img src="assets/img/logo-white.png" alt=""></a>
-            </div>
-        </div>
-        <div class="side-info">
-            <div class="contact-list mb-40">
-                <p>Welcome to Florix, A Full Service of Flooring and Tilling Works. </p>
-                <img src="assets/img/off-canvas.jpg" alt="">
-
-                <div class="mt-30 mb-30">
-                    <a href="contact.html" class="white-btn">Get In Touch</a>
-                </div>
-            </div>
-            <div class="social-area-wrap">
-                <a href="#"><i class="lab la-facebook-f"></i></a>
-                <a href="#"><i class="lab la-instagram"></i></a>
-                <a href="#"><i class="lab la-linkedin-in"></i></a>
-                <a href="#"><i class="lab la-skype"></i></a>
-            </div>
-        </div>
-    </div>
-
-    <div class="offcanvas-overlay"></div>
-
-
 
 
 
@@ -245,11 +208,4 @@
             </div>
         </div>
      </div>
-
-
-
-
-    <!-- Footer Section -->
-
-
     @endsection

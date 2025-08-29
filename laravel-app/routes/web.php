@@ -5,6 +5,11 @@ use App\Models\Page;
 use App\Http\Controllers\MainController;
 
 Route::get('/', [MainController::class, 'index'])->name('index');
+Route::get('/contact', [MainController::class, 'contact'])->name('contact');
+
+Route::get('/pages/{key}', [MainController::class, 'page']);
+
+
 
 // Sayfa route'ları
 Route::get('/pages/{slug}', function ($slug) {
