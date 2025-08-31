@@ -1,4 +1,4 @@
-FROM php:8.3-fpm
+FROM php:8.3-apache
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
@@ -10,14 +10,14 @@ RUN apt-get update && apt-get install -y \
     libzip-dev \
     zip \
     unzip \
-    supervisor \
-    cron \
     libicu-dev \
-    nginx \
     && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip intl
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# Enable Apache modules
+RUN a2enmod rewrite
 
 # Set working directory
 WORKDIR /var/www/html
@@ -33,18 +33,18 @@ RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html/storage \
     && chmod -R 755 /var/www/html/bootstrap/cache
 
-# Copy nginx configuration
-COPY docker/nginx/default.conf /etc/nginx/sites-available/default
+# Create .htaccess for Laravel
+RUN echo 'RewriteEngine On' > /var/www/html/public/.htaccess && \
+    echo 'RewriteCond %{REQUEST_FILENAME} !-d' >> /var/www/html/public/.htaccess && \
+    echo 'RewriteCond %{REQUEST_FILENAME} !-f' >> /var/www/html/public/.htaccess && \
+    echo 'RewriteRule ^ index.php [L]' >> /var/www/html/public/.htaccess
 
 # Copy startup script
-COPY docker/start.sh /start.sh
-RUN chmod +x /start.sh
-
-# Create health check endpoint
-RUN echo "<?php echo 'OK'; ?>" > /var/www/html/public/health.php
+COPY docker/start-railway.sh /start-railway.sh
+RUN chmod +x /start-railway.sh
 
 # Expose port
 EXPOSE 80
 
 # Start services
-CMD ["/start.sh"]
+CMD ["/start-railway.sh"]

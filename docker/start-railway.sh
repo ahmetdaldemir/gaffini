@@ -1,12 +1,9 @@
 #!/bin/bash
 
-# Start nginx
-service nginx start
+# Start Apache
+apache2-foreground &
 
-# Start PHP-FPM
-php-fpm -D
-
-# Wait for services to start
+# Wait for Apache to start
 sleep 10
 
 # Run Laravel migrations if needed
@@ -20,4 +17,4 @@ php artisan config:clear
 php artisan cache:clear
 
 # Keep container running
-tail -f /dev/null
+wait
