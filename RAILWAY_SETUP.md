@@ -48,37 +48,44 @@ BROADCAST_DRIVER=log
 FILESYSTEM_DISK=local
 ```
 
-## 4. APP_KEY Oluşturma
+## 4. Deployment
 
-Railway'de terminal açın ve şu komutu çalıştırın:
+1. Railway'de "Deploy" butonuna tıklayın
+2. Build sürecini bekleyin (5-10 dakika)
+3. Deployment tamamlandıktan sonra, Railway terminal'de aşağıdaki komutları çalıştırın:
+
+## 5. Post-Deployment Komutları
+
+Railway'de terminal açın ve şu komutları sırasıyla çalıştırın:
+
 ```bash
-php artisan key:generate
-```
+# APP_KEY oluşturma
+php artisan key:generate --force
 
-## 5. Migration ve Seeder Çalıştırma
-
-Railway'de terminal açın ve şu komutları çalıştırın:
-```bash
+# Migration'ları çalıştırma
 php artisan migrate --force
-php artisan db:seed --force
-```
 
-## 6. Storage Link Oluşturma
+# Storage link oluşturma
+php artisan storage:link --force
 
-```bash
-php artisan storage:link
-```
-
-## 7. Cache Temizleme ve Optimize Etme
-
-```bash
+# Cache'leri temizleme
 php artisan config:clear
 php artisan cache:clear
 php artisan route:clear
 php artisan view:clear
+
+# Production optimizasyonları
 php artisan config:cache
 php artisan route:cache
 php artisan view:cache
+```
+
+## 6. Seeder Çalıştırma (Opsiyonel)
+
+Eğer seed data'ları yüklemek istiyorsanız:
+
+```bash
+php artisan db:seed --force
 ```
 
 ## Sorun Giderme
@@ -102,6 +109,12 @@ chmod -R 755 storage
 chmod -R 755 bootstrap/cache
 ```
 
+## Test Endpoints
+
+Deployment sonrası şu endpoint'leri test edebilirsiniz:
+- `https://your-app.railway.app/health` - Genel sağlık kontrolü
+- `https://your-app.railway.app/db-test` - Veritabanı bağlantı testi
+
 ## Önemli Notlar
 
 1. **Production Environment**: `APP_ENV=production` ve `APP_DEBUG=false` olmalı
@@ -115,3 +128,19 @@ chmod -R 755 bootstrap/cache
 2. Veritabanı tablolarının oluştuğunu kontrol edin
 3. Admin panelinin çalıştığını kontrol edin
 4. Dosya upload'larının çalıştığını kontrol edin
+
+## Manuel Komutlar
+
+Eğer post-deploy komutları otomatik çalışmazsa, Railway terminal'de manuel olarak çalıştırın:
+
+```bash
+# Veritabanı bağlantısını test etme
+php artisan tinker --execute="DB::connection()->getPdo();"
+
+# Migration durumunu kontrol etme
+php artisan migrate:status
+
+# Cache'leri temizleme
+php artisan config:clear
+php artisan cache:clear
+```

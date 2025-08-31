@@ -1,5 +1,17 @@
 #!/bin/bash
 
+# Debug: Show current directory and files
+echo "Current directory: $(pwd)"
+echo "Files in current directory:"
+ls -la
+
+# Debug: Check if startup script exists
+if [ -f "/start-railway.sh" ]; then
+    echo "Startup script found at /start-railway.sh"
+else
+    echo "Startup script NOT found at /start-railway.sh"
+fi
+
 # Function to wait for database connection
 wait_for_db() {
     echo "Waiting for database connection..."

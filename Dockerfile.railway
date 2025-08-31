@@ -40,12 +40,8 @@ RUN echo 'RewriteEngine On' > /var/www/html/public/.htaccess && \
     echo 'RewriteCond %{REQUEST_FILENAME} !-f' >> /var/www/html/public/.htaccess && \
     echo 'RewriteRule ^ index.php [L]' >> /var/www/html/public/.htaccess
 
-# Copy startup script
-COPY docker/start-railway.sh /start-railway.sh
-RUN chmod +x /start-railway.sh
-
 # Expose port
 EXPOSE 80
 
-# Start services
-CMD ["/start-railway.sh"]
+# Start Apache
+CMD ["apache2-foreground"]

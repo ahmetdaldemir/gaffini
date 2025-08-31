@@ -2,7 +2,7 @@
 builder = "dockerfile"
 
 [deploy]
-startCommand = "/start-railway.sh"
+startCommand = "apache2-foreground"
 healthcheckPath = "/"
 healthcheckTimeout = 300
 restartPolicyType = "ON_FAILURE"
@@ -25,3 +25,13 @@ SESSION_DRIVER = "file"
 QUEUE_CONNECTION = "sync"
 BROADCAST_DRIVER = "log"
 FILESYSTEM_DISK = "local"
+
+[deploy.postDeploy]
+commands = [
+    "php artisan key:generate --force",
+    "php artisan migrate --force",
+    "php artisan storage:link --force",
+    "php artisan config:cache",
+    "php artisan route:cache",
+    "php artisan view:cache"
+]
