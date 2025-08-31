@@ -1,98 +1,117 @@
-# 🚂 Railway Deployment Setup
+# Railway Deployment Setup
 
-## Healthcheck Sorunu Çözümü
+Bu rehber, Laravel uygulamanızı Railway'de deploy etmek için gerekli adımları içerir.
 
-### 1. Railway Dashboard'da Environment Variables
+## 1. Railway'de Proje Oluşturma
 
-Railway dashboard'da şu environment variables'ları ekleyin:
+1. [Railway Dashboard](https://railway.app/dashboard)'a gidin
+2. "New Project" butonuna tıklayın
+3. "Deploy from GitHub repo" seçeneğini seçin
+4. Bu repository'yi seçin
 
-```bash
+## 2. Veritabanı Ekleme
+
+1. Railway projenizde "New" butonuna tıklayın
+2. "Database" seçeneğini seçin
+3. "MySQL" veritabanını seçin
+4. Veritabanı oluşturulduktan sonra, "Connect" sekmesinden connection bilgilerini alın
+
+## 3. Environment Variables Ayarlama
+
+Railway'de projenizin "Variables" sekmesinde aşağıdaki environment değişkenlerini ayarlayın:
+
+### Temel Ayarlar
+```
 APP_ENV=production
 APP_DEBUG=false
 APP_URL=https://your-app-name.railway.app
-APP_KEY=base64:your-app-key-here
 LOG_CHANNEL=stack
 LOG_LEVEL=error
+```
+
+### Veritabanı Ayarları (Railway otomatik olarak sağlar)
+```
 DB_CONNECTION=mysql
+DB_HOST=${MYSQLHOST}
+DB_PORT=${MYSQLPORT}
+DB_DATABASE=${MYSQLDATABASE}
+DB_USERNAME=${MYSQLUSER}
+DB_PASSWORD=${MYSQLPASSWORD}
+```
+
+### Diğer Ayarlar
+```
 CACHE_DRIVER=file
 SESSION_DRIVER=file
 QUEUE_CONNECTION=sync
+BROADCAST_DRIVER=log
+FILESYSTEM_DISK=local
 ```
 
-### 2. Laravel Key Oluşturma
+## 4. APP_KEY Oluşturma
 
-Laravel key oluşturmak için:
+Railway'de terminal açın ve şu komutu çalıştırın:
+```bash
+php artisan key:generate
+```
+
+## 5. Migration ve Seeder Çalıştırma
+
+Railway'de terminal açın ve şu komutları çalıştırın:
+```bash
+php artisan migrate --force
+php artisan db:seed --force
+```
+
+## 6. Storage Link Oluşturma
 
 ```bash
-# Yerel makinenizde
-cd laravel-app
-php artisan key:generate --show
+php artisan storage:link
 ```
 
-Bu komut size bir key verecek. Bu key'i Railway'de `APP_KEY` olarak kullanın.
+## 7. Cache Temizleme ve Optimize Etme
 
-### 3. Veritabanı Ekleme
-
-1. Railway dashboard'da "New Service" → "Database" → "MySQL"
-2. Environment variables'da şu değişkenleri güncelleyin:
-   - `DB_HOST`: Railway'in verdiği host
-   - `DB_DATABASE`: Railway'in verdiği database name
-   - `DB_USERNAME`: Railway'in verdiği username
-   - `DB_PASSWORD`: Railway'in verdiği password
-
-### 4. Healthcheck Endpoint
-
-Proje `/health` endpoint'ini içerir. Bu endpoint şu JSON'u döner:
-
-```json
-{
-  "status": "OK",
-  "timestamp": "2024-01-01T00:00:00.000000Z"
-}
+```bash
+php artisan config:clear
+php artisan cache:clear
+php artisan route:clear
+php artisan view:clear
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
 ```
 
-### 5. Deployment Adımları
+## Sorun Giderme
 
-1. **GitHub repo'nuzu Railway'e bağlayın**
-2. **Environment variables'ları ayarlayın**
-3. **MySQL veritabanı ekleyin**
-4. **Deploy edin**
+### Veritabanı Bağlantı Hatası
+Eğer "Connection refused" hatası alıyorsanız:
+1. Veritabanının Railway'de aktif olduğundan emin olun
+2. Environment değişkenlerinin doğru ayarlandığından emin olun
+3. Veritabanı servisinin uygulama servisinden önce başladığından emin olun
 
-### 6. Troubleshooting
+### Migration Hatası
+Eğer migration'lar çalışmıyorsa:
+1. Veritabanı bağlantısını kontrol edin
+2. `php artisan migrate:status` komutu ile durumu kontrol edin
+3. Gerekirse `php artisan migrate:fresh --seed` komutunu çalıştırın
 
-#### Healthcheck Hatası
-- Environment variables'ların doğru olduğundan emin olun
-- `APP_KEY`'in doğru formatta olduğunu kontrol edin
-- Veritabanı bağlantısını test edin
+### Dosya İzinleri
+Eğer dosya izin hatası alıyorsanız:
+```bash
+chmod -R 755 storage
+chmod -R 755 bootstrap/cache
+```
 
-#### Veritabanı Bağlantı Hatası
-- Railway'de MySQL servisinin çalıştığından emin olun
-- Environment variables'da DB_* değişkenlerini kontrol edin
+## Önemli Notlar
 
-#### Laravel Hatası
-- Logları kontrol edin: Railway dashboard → Logs
-- Cache'i temizleyin: `php artisan cache:clear`
+1. **Production Environment**: `APP_ENV=production` ve `APP_DEBUG=false` olmalı
+2. **SSL**: Railway otomatik olarak SSL sertifikası sağlar
+3. **Database**: Railway MySQL veritabanı kullanır
+4. **Logs**: Railway'de logları "Logs" sekmesinden takip edebilirsiniz
 
-### 7. Monitoring
+## Deployment Sonrası Kontrol
 
-Railway dashboard'da:
-- **Logs**: Uygulama loglarını görüntüleyin
-- **Metrics**: CPU, memory kullanımını izleyin
-- **Health**: Healthcheck durumunu kontrol edin
-
-### 8. Domain Ayarlama
-
-Railway otomatik olarak bir domain verir. Özel domain eklemek için:
-1. Railway dashboard → Settings → Domains
-2. "Add Domain" → domain adınızı girin
-3. DNS ayarlarını yapın
-
-### 9. SSL Sertifikası
-
-Railway otomatik olarak SSL sertifikası sağlar. Ek ayar gerekmez.
-
-### 10. Backup
-
-Railway MySQL veritabanı otomatik backup alır. Manuel backup için:
-1. Railway dashboard → Database → Backups
-2. "Create Backup" → backup'ı indirin
+1. Uygulamanızın çalıştığını kontrol edin
+2. Veritabanı tablolarının oluştuğunu kontrol edin
+3. Admin panelinin çalıştığını kontrol edin
+4. Dosya upload'larının çalıştığını kontrol edin
