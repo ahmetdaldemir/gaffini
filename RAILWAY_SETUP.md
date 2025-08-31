@@ -90,6 +90,18 @@ php artisan db:seed --force
 
 ## Sorun Giderme
 
+### Startup Script Hatası
+Eğer startup script hatası alırsanız:
+
+**Çözüm 1: Manuel Komutlar**
+Railway terminal'de manuel olarak komutları çalıştırın (yukarıdaki Post-Deployment Komutları)
+
+**Çözüm 2: Basit Apache Başlatma**
+Railway'de "Variables" sekmesinde:
+```
+startCommand = "apache2-foreground"
+```
+
 ### Veritabanı Bağlantı Hatası
 Eğer "Connection refused" hatası alıyorsanız:
 1. Veritabanının Railway'de aktif olduğundan emin olun
@@ -143,4 +155,20 @@ php artisan migrate:status
 # Cache'leri temizleme
 php artisan config:clear
 php artisan cache:clear
+```
+
+## Alternatif Çözümler
+
+### Eğer Startup Script Çalışmazsa
+Railway'de "Variables" sekmesinde:
+```
+startCommand = "apache2-foreground"
+```
+
+Sonra manuel olarak komutları çalıştırın.
+
+### Eğer Apache Başlamazsa
+Railway'de "Variables" sekmesinde:
+```
+startCommand = "php -S 0.0.0.0:80 -t public"
 ```

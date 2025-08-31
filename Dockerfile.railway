@@ -23,6 +23,10 @@ RUN a2enmod rewrite
 # Set working directory
 WORKDIR /var/www/html
 
+# Copy startup script first
+COPY docker/start-railway.sh /var/www/html/start-railway.sh
+RUN chmod +x /var/www/html/start-railway.sh
+
 # Copy Laravel application
 COPY laravel-app/ .
 
@@ -43,5 +47,5 @@ RUN echo 'RewriteEngine On' > /var/www/html/public/.htaccess && \
 # Expose port
 EXPOSE 80
 
-# Start Apache
-CMD ["apache2-foreground"]
+# Start services
+CMD ["/var/www/html/start-railway.sh"]
