@@ -26,10 +26,6 @@ WORKDIR /var/www/html
 # Copy Laravel application
 COPY laravel-app/ .
 
-# Copy startup script to Laravel app directory
-COPY docker/start-railway.sh ./start-railway.sh
-RUN chmod +x ./start-railway.sh
-
 # Install Laravel dependencies
 RUN composer install --no-dev --optimize-autoloader
 
@@ -47,5 +43,5 @@ RUN echo 'RewriteEngine On' > /var/www/html/public/.htaccess && \
 # Expose port
 EXPOSE 80
 
-# Start services
-CMD ["./start-railway.sh"]
+# Start Apache directly
+CMD ["apache2-foreground"]

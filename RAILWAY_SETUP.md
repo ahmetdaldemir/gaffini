@@ -25,6 +25,7 @@ Railway'de projenizin "Variables" sekmesinde aşağıdaki environment değişken
 APP_ENV=production
 APP_DEBUG=false
 APP_URL=https://your-app-name.railway.app
+APP_NAME=Gaffini
 LOG_CHANNEL=stack
 LOG_LEVEL=error
 ```
@@ -172,3 +173,16 @@ Railway'de "Variables" sekmesinde:
 ```
 startCommand = "php -S 0.0.0.0:80 -t public"
 ```
+
+## Yeni Deployment Yaklaşımı
+
+**Artık startup script kullanmıyoruz:**
+- ✅ Doğrudan Apache başlatılıyor
+- ✅ Daha güvenilir deployment
+- ✅ Daha az hata riski
+- ✅ Manuel komutlarla kontrol
+
+**Deployment sırası:**
+1. **Container başlar** → Apache çalışır
+2. **Post-deploy komutları** → Laravel ayarları yapılır
+3. **Manuel komutlar** → Gerekirse terminal'den çalıştırılır
