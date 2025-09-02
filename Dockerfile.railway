@@ -20,8 +20,19 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # Set working directory
 WORKDIR /var/www/html
 
+# Set environment variables
+ENV APP_ENV=production
+ENV APP_DEBUG=false
+ENV LOG_CHANNEL=stack
+ENV CACHE_DRIVER=file
+ENV SESSION_DRIVER=file
+ENV QUEUE_CONNECTION=sync
+
 # Copy Laravel application
 COPY laravel-app/ .
+
+# Create health check file
+RUN echo "<?php echo 'OK'; ?>" > /var/www/html/public/health.php
 
 # Install Laravel dependencies
 RUN composer install --no-dev --optimize-autoloader
@@ -29,7 +40,10 @@ RUN composer install --no-dev --optimize-autoloader
 # Set permissions
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html/storage \
-    && chmod -R 755 /var/www/html/bootstrap/cache
+    && chmod -R 755 /var/www/html/bootstrap/cache \
+    && chmod -R 775 /var/www/html/storage/logs \
+    && chmod -R 775 /var/www/html/storage/framework \
+    && chmod -R 775 /var/www/html/storage/app
 
 # Expose port
 EXPOSE 80

@@ -4,10 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Models\Page;
 use App\Http\Controllers\MainController;
 
-// Health check endpoint for Railway
-Route::get('/health', function () {
-    return response()->json(['status' => 'OK', 'timestamp' => now()]);
-});
+// Health check endpoint is handled by Laravel's built-in health check at /health
 
 // Database connection test endpoint for Railway
 Route::get('/db-test', function () {
