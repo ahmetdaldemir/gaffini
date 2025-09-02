@@ -2,11 +2,11 @@
 builder = "dockerfile"
 
 [deploy]
-startCommand = "php -S 0.0.0.0:80 -t public"
+startCommand = "php -S 0.0.0.0:80 -t public --max-execution-time=300 --memory-limit=512M"
 healthcheckPath = "/health.php"
-healthcheckTimeout = 600
-restartPolicyType = "ON_FAILURE"
-restartPolicyMaxRetries = 10
+healthcheckTimeout = 900
+restartPolicyType = "ALWAYS"
+restartPolicyMaxRetries = 15
 
 [deploy.variables]
 # Laravel Temel Ayarları
