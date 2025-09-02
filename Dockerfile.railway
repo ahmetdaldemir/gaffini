@@ -27,26 +27,43 @@ ENV LOG_CHANNEL=stack
 ENV CACHE_DRIVER=file
 ENV SESSION_DRIVER=file
 ENV QUEUE_CONNECTION=sync
+ENV APP_KEY=base64:your-app-key-here
+ENV APP_URL=http://localhost
+ENV DB_CONNECTION=mysql
+ENV CACHE_DRIVER=file
+ENV SESSION_DRIVER=file
+ENV QUEUE_CONNECTION=sync
+ENV BROADCAST_DRIVER=log
+ENV MAIL_MAILER=log
 
 # Copy Laravel application
 COPY laravel-app/ .
 
 # Create health check file
-RUN echo "<?php echo 'OK'; ?>" > /var/www/html/public/health.php
+RUN echo '<?php header("Content-Type: text/plain"); echo "OK"; ?>' > /var/www/html/public/health.php
 
 # Install Laravel dependencies
 RUN composer install --no-dev --optimize-autoloader
 
-# Set permissions
+# Set permissions and create necessary directories
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html/storage \
     && chmod -R 755 /var/www/html/bootstrap/cache \
     && chmod -R 775 /var/www/html/storage/logs \
     && chmod -R 775 /var/www/html/storage/framework \
-    && chmod -R 775 /var/www/html/storage/app
+    && chmod -R 775 /var/www/html/storage/app \
+    && chmod -R 775 /var/www/html/storage/framework/cache \
+    && chmod -R 775 /var/www/html/storage/framework/sessions \
+    && chmod -R 775 /var/www/html/storage/framework/views \
+    && mkdir -p /var/www/html/storage/framework/cache/data \
+    && mkdir -p /var/www/html/storage/framework/sessions \
+    && mkdir -p /var/www/html/storage/framework/views \
+    && mkdir -p /var/www/html/storage/logs \
+    && touch /var/www/html/storage/logs/laravel.log \
+    && chmod 666 /var/www/html/storage/logs/laravel.log
 
 # Expose port
 EXPOSE 80
 
 # Start PHP built-in server
-CMD ["php", "-S", "0.0.0.0:80", "-t", "public"]
+CMD ["php", "-S", "0.0.0.0:80", "-t", "public", "--max-execution-time=300", "--memory-limit=512M"]
