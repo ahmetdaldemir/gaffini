@@ -45,7 +45,8 @@ ENV PHP_MEMORY_LIMIT=512M
 COPY laravel-app/ .
 
 # Create health check file
-RUN echo '<?php echo "OK"; ?>' > /var/www/html/public/health.php
+RUN echo '<?php header("Content-Type: text/plain"); http_response_code(200); echo "OK"; ?>' > /var/www/html/public/health.php \
+    && chmod 644 /var/www/html/public/health.php
 
 # Install Laravel dependencies
 RUN composer install --no-dev --optimize-autoloader
@@ -69,7 +70,10 @@ RUN chown -R www-data:www-data /var/www/html \
     && rm -f /var/www/html/storage/framework/views/.gitignore \
     && rm -f /var/www/html/storage/framework/cache/.gitignore \
     && rm -f /var/www/html/storage/logs/.gitignore \
-    && chmod -R 777 /var/www/html/storage/framework/cache/data
+    && chmod -R 777 /var/www/html/storage/framework/cache/data \
+    && chmod -R 777 /var/www/html/storage/framework/sessions \
+    && chmod -R 777 /var/www/html/storage/framework/views \
+    && chmod -R 777 /var/www/html/bootstrap/cache
 
 # Expose port
 EXPOSE 80

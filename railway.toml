@@ -4,9 +4,9 @@ builder = "dockerfile"
 [deploy]
 startCommand = "php -S 0.0.0.0:80 -t public"
 healthcheckPath = "/health.php"
-healthcheckTimeout = 900
-restartPolicyType = "ALWAYS"
-restartPolicyMaxRetries = 15
+healthcheckTimeout = 1200
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 20
 
 [deploy.variables]
 # Laravel Temel Ayarları
