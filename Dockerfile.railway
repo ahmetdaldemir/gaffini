@@ -17,6 +17,12 @@ RUN apt-get update && apt-get install -y \
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
+# Create custom php.ini
+RUN echo "max_execution_time = 300" > /usr/local/etc/php/conf.d/custom.ini \
+    && echo "memory_limit = 512M" >> /usr/local/etc/php/conf.d/custom.ini \
+    && echo "upload_max_filesize = 64M" >> /usr/local/etc/php/conf.d/custom.ini \
+    && echo "post_max_size = 64M" >> /usr/local/etc/php/conf.d/custom.ini
+
 # Set working directory
 WORKDIR /var/www/html
 
@@ -32,12 +38,14 @@ ENV SESSION_DRIVER=file
 ENV QUEUE_CONNECTION=sync
 ENV BROADCAST_DRIVER=log
 ENV MAIL_MAILER=log
+ENV PHP_MAX_EXECUTION_TIME=300
+ENV PHP_MEMORY_LIMIT=512M
 
 # Copy Laravel application
 COPY laravel-app/ .
 
 # Create health check file
-RUN echo '<?php header("Content-Type: text/plain"); http_response_code(200); echo "OK"; exit(0); ?>' > /var/www/html/public/health.php
+RUN echo '<?php echo "OK"; ?>' > /var/www/html/public/health.php
 
 # Install Laravel dependencies
 RUN composer install --no-dev --optimize-autoloader
@@ -60,10 +68,11 @@ RUN chown -R www-data:www-data /var/www/html \
     && chmod 666 /var/www/html/storage/logs/laravel.log \
     && rm -f /var/www/html/storage/framework/views/.gitignore \
     && rm -f /var/www/html/storage/framework/cache/.gitignore \
-    && rm -f /var/www/html/storage/logs/.gitignore
+    && rm -f /var/www/html/storage/logs/.gitignore \
+    && chmod -R 777 /var/www/html/storage/framework/cache/data
 
 # Expose port
 EXPOSE 80
 
 # Start PHP built-in server
-CMD ["php", "-S", "0.0.0.0:80", "-t", "public", "--max-execution-time=300", "--memory-limit=512M"]
+CMD ["php", "-S", "0.0.0.0:80", "-t", "public"]

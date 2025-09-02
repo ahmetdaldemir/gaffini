@@ -2,7 +2,7 @@
 builder = "dockerfile"
 
 [deploy]
-startCommand = "php -S 0.0.0.0:80 -t public --max-execution-time=300 --memory-limit=512M"
+startCommand = "php -S 0.0.0.0:80 -t public"
 healthcheckPath = "/health.php"
 healthcheckTimeout = 900
 restartPolicyType = "ALWAYS"
